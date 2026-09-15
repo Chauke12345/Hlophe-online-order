@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>EdVance Owner Dashboard</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            color: #222;
+        }
+
+        .owner-header {
+            background: #161616;
+            color: white;
+            padding: 26px 20px;
+        }
+
+        .owner-header-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .owner-header h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .owner-header p {
+            margin: 6px 0 0;
+            color: #f1b24a;
+        }
+
+        .owner-container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px 30px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        .summary-label {
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .summary-value {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .section-title {
+            margin: 0 0 18px;
+            font-size: 24px;
+        }
+        .settlement-btn {
+    width: 100%;
+    max-width: 360px;
+    padding: 14px 18px;
+    margin-bottom: 28px;
+    border: none;
+    border-radius: 9px;
+    background: #176b31;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.settlement-btn:hover {
+    background: #125426;
+}
+
+        .order-card {
+            background: white;
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+        }
+
+        .order-card h3 {
+            margin: 0 0 16px;
+        }
+
+        .order-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 7px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-row:last-child {
+            border-bottom: none;
+        }
+
+        .paid {
+            color: #176b31;
+            font-weight: 700;
+        }
+
+        .unpaid {
+            color: #b52e24;
+            font-weight: 700;
+        }
+
+        .empty-state {
+            background: white;
+            padding: 35px 20px;
+            border-radius: 14px;
+            text-align: center;
+            color: #666;
+        }
+
+        .month-filter {
+    background: white;
+    padding: 18px 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+}
+
+.month-filter label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.month-filter select {
+    width: 100%;
+    max-width: 300px;
+    padding: 11px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: white;
+    font-size: 16px;
+}
+
+        @media (max-width: 850px) {
+
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .owner-container {
+                padding: 0 12px 24px;
+            }
+
+            .order-row {
+                flex-direction: column;
+                gap: 3px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<header class="owner-header">
+
+    <div class="owner-header-inner">
+
+        <div>
+            <h1>
+                EdVance Owner Dashboard
+            </h1>
+
+            <p>
+                Monitor completed Hlophe orders
+                and platform revenue
+            </p>
+        </div>
+
+        <form
+            method="POST"
+            action="{% url 'owner_logout' %}"
+        >
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="logout-btn"
+            >
+                Logout
+            </button>
+
+        </form>
+
+    </div>
+
+</header>
+
+
+<div class="owner-container">
+
+
+    <!-- =========================================
+         MONTH FILTER
+    ========================================== -->
+
+    <div class="month-filter">
+
+        <label for="monthSelect">
+            Settlement Month
+        </label>
+
+        <select
+            id="monthSelect"
+            onchange="window.location.href=this.value"
+        >
+
+            {% for month in available_months %}
+
+                <option
+                    value="?year={{ month.year }}&month={{ month.month }}"
+                    {% if month.year == selected_year and month.month == selected_month %}
+                        selected
+                    {% endif %}
+                >
+                    {{ month|date:"F Y" }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <!-- =========================================
+         SUMMARY
+    ========================================== -->
+
+    <div class="summary-grid">
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Completed Orders
+            </div>
+
+            <div class="summary-value">
+                {{ total_orders }}
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Total Platform Fees
+            </div>
+
+            <div class="summary-value">
+                R{{ total_platform_fees }}
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Paid to EdVance
+            </div>
+
+            <div class="summary-value">
+                R{{ paid_platform_fees }}
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Outstanding
+            </div>
+
+            <div class="summary-value">
+                R{{ outstanding_platform_fees }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         SETTLEMENT BUTTON
+    ========================================== -->
+
+    {% if outstanding_platform_fees > 0 %}
+
+        <form
+            method="POST"
+            action="{% url 'mark_platform_fees_paid' %}"
+        >
+
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="year"
+                value="{{ selected_year }}"
+            >
+
+            <input
+                type="hidden"
+                name="month"
+                value="{{ selected_month }}"
+            >
+
+            <button
+                type="submit"
+                class="settlement-btn"
+                onclick="return confirm('Mark this month’s outstanding EdVance fees as paid?');"
+            >
+                Mark This Month as Paid
+            </button>
+
+        </form>
+
+    {% endif %}
+
+
+    <!-- =========================================
+         COMPLETED ORDERS
+    ========================================== -->
+
+    <h2 class="section-title">
+        Completed Orders
+    </h2>
+
+
+    {% for order in orders %}
+
+        <div class="order-card">
+
+            <h3>
+                Order #{{ order.id }}
+            </h3>
+
+
+            <div class="order-row">
+
+                <span>
+                    Customer
+                </span>
+
+                <strong>
+                    {{ order.customer_name }}
+                </strong>
+
+            </div>
+
+
+            <div class="order-row">
+
+                <span>
+                    Order Total
+                </span>
+
+                <strong>
+
+                    {% if order.final_total %}
+                        R{{ order.final_total }}
+                    {% else %}
+                        R{{ order.estimated_total }}
+                    {% endif %}
+
+                </strong>
+
+            </div>
+
+
+            <div class="order-row">
+
+                <span>
+                    Platform Fee
+                </span>
+
+                <strong>
+                    R{{ order.platform_fee }}
+                </strong>
+
+            </div>
+
+
+            <div class="order-row">
+
+                <span>
+                    EdVance Settlement
+                </span>
+
+                {% if order.platform_fee_paid %}
+
+                    <span class="paid">
+                        Paid
+                    </span>
+
+                {% else %}
+
+                    <span class="unpaid">
+                        Outstanding
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="order-row">
+
+                <span>
+                    Completed Date
+                </span>
+
+                <strong>
+                    {{ order.updated_at|date:"d M Y, H:i" }}
+                </strong>
+
+            </div>
+
+        </div>
+
+    {% empty %}
+
+        <div class="empty-state">
+
+            <h3>
+                No Completed Orders Yet
+            </h3>
+
+            <p>
+                Collected orders will appear here automatically.
+            </p>
+
+        </div>
+
+    {% endfor %}
+
+
+</div>
+
+</body>
+
+</html>
+
+</div>
+
+</body>
+
+</html>

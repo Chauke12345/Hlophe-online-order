@@ -1,0 +1,757 @@
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        color: #222;
+    }
+
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    .dashboard-header {
+        background: #161616;
+        color: white;
+        padding: 24px 20px;
+    }
+
+    .dashboard-header-inner {
+        max-width: 1000px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .dashboard-header h1 {
+        margin: 0;
+        font-size: 30px;
+    }
+
+    .dashboard-header p {
+        margin: 6px 0 0;
+        color: #f1b24a;
+    }
+
+    .dashboard-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .logout-form {
+        margin: 0;
+    }
+
+    .history-link,
+    .logout-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .history-link {
+        background: #ffffff;
+        color: #222222;
+    }
+
+    .history-link:hover {
+        background: #eeeeee;
+    }
+
+    .logout-btn {
+        background: #dc3545;
+        color: #ffffff;
+        border: none;
+        cursor: pointer;
+    }
+
+    .logout-btn:hover {
+        opacity: 0.9;
+    }
+
+
+    /* =========================
+       DASHBOARD
+    ========================= */
+
+    .dashboard-container {
+        max-width: 1000px;
+        margin: 30px auto;
+        padding: 0 20px 30px;
+    }
+
+    .order-card {
+        background: white;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 22px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+    }
+
+    .order-card h2 {
+        margin: 0 0 18px;
+        font-size: 24px;
+    }
+
+    .order-meta {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .meta-box {
+        background: #f7f7f7;
+        padding: 12px;
+        border-radius: 8px;
+    }
+
+    .meta-label {
+        display: block;
+        font-size: 13px;
+        color: #777;
+        margin-bottom: 4px;
+    }
+
+    .meta-value {
+        font-weight: 700;
+    }
+
+    .order-items {
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
+        padding: 14px 0;
+        margin: 18px 0;
+    }
+
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 8px 0;
+    }
+
+
+    /* =========================
+       ESTIMATED PRICE
+    ========================= */
+
+    .estimated-price {
+        background: #fff5dc;
+        border: 2px solid #e7a52a;
+        padding: 14px;
+        border-radius: 10px;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+
+    /* =========================
+       UPDATE FORM
+    ========================= */
+
+    .update-form {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        align-items: end;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .form-group select,
+    .form-group input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 15px;
+        background: white;
+    }
+
+    .update-btn {
+        width: 100%;
+        padding: 13px 16px;
+        border: none;
+        border-radius: 8px;
+        background: #c9362b;
+        color: white;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .update-btn:hover {
+        background: #a82b22;
+    }
+
+
+    /* =========================
+       ORDER STATUS COLOURS
+    ========================= */
+
+    .status-box {
+        border: 2px solid transparent;
+        transition: 0.2s ease;
+    }
+
+    .status-box .meta-label {
+        color: inherit;
+        opacity: 0.75;
+    }
+
+    .status-value {
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .status-new {
+        background: #fff4cc;
+        border-color: #e7b52c;
+        color: #795600;
+    }
+
+    .status-preparing {
+        background: #fff0dc;
+        border-color: #e98b2a;
+        color: #8a4700;
+    }
+
+    .status-braaiing {
+        background: #ffe4e1;
+        border-color: #d7473e;
+        color: #9b211a;
+    }
+
+    .status-ready {
+        background: #e1f6e8;
+        border-color: #39a85b;
+        color: #176b31;
+    }
+
+    .status-collected {
+        background: #e1efff;
+        border-color: #4389d8;
+        color: #1d5d9f;
+    }
+
+    .status-cancelled {
+        background: #eeeeee;
+        border-color: #888888;
+        color: #555555;
+    }
+
+
+    /* =========================
+       STATUS UPDATE
+    ========================= */
+
+    .status-update-box {
+        background: #fff8e8;
+        border: 2px solid #e7a52a;
+        border-radius: 10px;
+        padding: 15px;
+    }
+
+    .status-update-box label {
+        display: block;
+        font-weight: 800;
+        margin-bottom: 8px;
+        color: #8a5700;
+    }
+
+    .status-update-box select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #d8a13b;
+        border-radius: 8px;
+        background: white;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+
+    /* =========================
+       WHATSAPP
+    ========================= */
+
+    .whatsapp-btn {
+        display: block;
+        margin-top: 16px;
+        padding: 14px 18px;
+        background: #1f8f4d;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .whatsapp-btn:hover {
+        background: #176f3b;
+    }
+    .counter-order-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+
+    background: #c9362b;
+    color: #ffffff;
+}
+
+.counter-order-link:hover {
+    background: #a82b22;
+}
+
+/* =========================================================
+   ORDER SOURCE BADGES
+========================================================= */
+
+.order-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.order-title-row h2 {
+    margin: 0;
+}
+
+.source-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.counter-source {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffe69c;
+}
+
+.online-source {
+    background: #e8f4ff;
+    color: #0b5fa5;
+    border: 1px solid #b6dcff;
+}
+
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 750px) {
+
+        .dashboard-header-inner {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .dashboard-header-actions {
+            width: 100%;
+        }
+
+        .history-link,
+        .logout-form {
+            flex: 1;
+        }
+
+        .history-link {
+            width: 100%;
+            text-align: center;
+        }
+
+        .logout-btn {
+            width: 100%;
+        }
+
+        .order-meta {
+            grid-template-columns: 1fr;
+        }
+
+        .update-form {
+            grid-template-columns: 1fr;
+        }
+
+        .dashboard-container {
+            padding: 0 12px 24px;
+        }
+
+        .order-card {
+            padding: 18px;
+        }
+
+        .order-item {
+            flex-direction: column;
+            gap: 3px;
+        }
+    }
+
+
+</style>
+
+<header class="dashboard-header">
+
+    <div class="dashboard-header-inner">
+
+        <!-- LEFT SIDE -->
+        <div>
+            <h1>
+                Hlophe Staff Dashboard
+            </h1>
+
+            <p>
+                Manage incoming customer orders
+            </p>
+        </div>
+
+
+        <!-- RIGHT SIDE -->
+        <div class="dashboard-header-actions">
+
+            <a
+                href="{% url 'staff_counter_order' %}"
+                class="counter-order-link"
+            >
+                🏪 New Counter Order
+            </a>
+
+            <a
+                href="{% url 'staff_order_history' %}"
+                class="history-link"
+            >
+                Order History
+            </a>
+
+            <form
+                method="POST"
+                action="{% url 'staff_logout' %}"
+                class="logout-form"
+            >
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="logout-btn"
+                >
+                    Logout
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</header>
+
+<div class="dashboard-container">
+
+    {% for order in orders %}
+
+        <div class="order-card">
+
+           <div class="order-title-row">
+
+    <h2>
+        Order #{{ order.id }}
+    </h2>
+
+    {% if order.order_source == "counter" %}
+
+        <span class="source-badge counter-source">
+            🏪 Counter Order
+        </span>
+
+    {% else %}
+
+        <span class="source-badge online-source">
+            🌐 Online Order
+        </span>
+
+    {% endif %}
+
+</div>
+
+
+            <div class="order-meta">
+
+                <div class="meta-box">
+
+                    <span class="meta-label">
+                        Customer
+                    </span>
+
+                    <span class="meta-value">
+                        {{ order.customer_name }}
+                    </span>
+
+                </div>
+
+
+                <div class="meta-box">
+
+                    <span class="meta-label">
+                        Contact
+                    </span>
+
+                    <span class="meta-value">
+                        {{ order.whatsapp_number }}
+                    </span>
+
+                </div>
+
+
+               <div class="meta-box status-box status-{{ order.status }}">
+
+    <span class="meta-label">
+        Current Status
+    </span>
+
+    <span class="meta-value status-value">
+        {{ order.get_status_display }}
+    </span>
+
+</div>
+
+            </div>
+
+
+            <div class="order-items">
+
+                {% for item in order.items.all %}
+
+                    <div class="order-item">
+
+                        <span>
+
+                            {{ item.menu_item.name }}
+
+                            {% if item.menu_item.pricing_type == "fixed" %}
+                                ×{{ item.quantity }}
+                            {% endif %}
+
+                        </span>
+
+
+                        <strong>
+                            R{{ item.requested_amount }}
+                        </strong>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <div class="estimated-price">
+
+                Estimated Price:
+                R{{ order.estimated_total }}
+
+            </div>
+
+
+            <form
+                method="POST"
+                action="{% url 'staff_update_order' order.id %}"
+                class="update-form"
+            >
+
+                {% csrf_token %}
+
+
+                <div class="form-group">
+
+                    <label>
+                        Braai Master
+                    </label>
+
+                    <select name="braai_master">
+
+                        <option value="">
+                            Not assigned
+                        </option>
+
+                        {% for master in braai_masters %}
+
+                            <option
+                                value="{{ master.id }}"
+                                {% if order.braai_master_id == master.id %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ master.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                {% if order.order_source == "counter" %}
+
+    <div class="form-group">
+
+        <label>
+            Payment Status
+        </label>
+
+        <select name="payment_status">
+
+            <option
+                value="pending"
+                {% if order.payment_status == "pending" %}
+                    selected
+                {% endif %}
+            >
+                Payment Pending
+            </option>
+
+            <option
+                value="paid"
+                {% if order.payment_status == "paid" %}
+                    selected
+                {% endif %}
+            >
+                ✓ Paid
+            </option>
+
+        </select>
+
+    </div>
+
+{% endif %}
+
+
+               <div class="form-group status-update-box">
+
+    <label>
+        Update Status
+    </label>
+
+    <select name="status">
+
+                        {% for value, label in order.STATUS_CHOICES %}
+
+                            <option
+                                value="{{ value }}"
+                                {% if order.status == value %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ label }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Final Total
+                    </label>
+
+                    <input
+                        type="number"
+                        name="final_total"
+                        step="0.01"
+                        min="0"
+                        value="{{ order.final_total|default_if_none:'' }}"
+                        placeholder="Enter final total"
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="update-btn"
+                >
+                    Update Order
+                </button>
+
+          </form>
+
+
+<!-- =========================================
+     PREPARING ORDER WHATSAPP
+========================================== -->
+
+{% if order.status == "preparing" and order.final_total %}
+
+    <a
+        href="https://wa.me/27{{ order.whatsapp_number|slice:'1:' }}?text=Hi%20{{ order.customer_name|urlencode }}%2C%20your%20Hlophe%20order%20%23{{ order.id }}%20has%20been%20confirmed%20and%20is%20being%20prepared.%20Your%20confirmed%20order%20total%20is%20R{{ order.final_total }}.%20We%27ll%20notify%20you%20when%20your%20order%20is%20ready.%20Thank%20you.%20🔥"
+        target="_blank"
+        class="whatsapp-btn"
+    >
+        Send Confirmed Price on WhatsApp
+    </a>
+
+{% endif %}
+
+
+<!-- =========================================
+     READY FOR COLLECTION WHATSAPP
+========================================== -->
+
+{% if order.status == "ready" %}
+
+    <a
+        href="https://wa.me/27{{ order.whatsapp_number|slice:'1:' }}?text=Hi%20{{ order.customer_name|urlencode }}%2C%20your%20Hlophe%20order%20%23{{ order.id }}%20is%20ready%20for%20collection.%20Final%20total%3A%20R{{ order.final_total|default:order.estimated_total }}.%20Thank%20you.%20🔥"
+        target="_blank"
+        class="whatsapp-btn"
+    >
+        Send Ready Notification on WhatsApp
+    </a>
+
+{% endif %}
+
+        </div>
+
+    {% empty %}
+
+        <div class="order-card">
+            No active orders.
+        </div>
+
+    {% endfor %}
+
+</div>

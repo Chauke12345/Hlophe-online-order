@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>New Counter Order | Hlophe</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            color: #222;
+        }
+
+        /* =========================================
+           HEADER
+        ========================================== */
+
+        .page-header {
+            background: #222;
+            color: white;
+            padding: 20px;
+        }
+
+        .page-header-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 25px;
+        }
+
+        .page-header p {
+            margin: 6px 0 0;
+            color: #ccc;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            background: #fff;
+            color: #222;
+
+            padding: 10px 16px;
+            border-radius: 8px;
+
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        /* =========================================
+           PAGE
+        ========================================== */
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px 40px;
+        }
+
+        .counter-badge {
+            display: inline-block;
+
+            background: #fff0df;
+            color: #9b4c00;
+
+            padding: 7px 12px;
+            border-radius: 20px;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            margin-bottom: 15px;
+        }
+
+        .card {
+            background: white;
+
+            padding: 25px;
+            margin-bottom: 22px;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 4px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        /* =========================================
+           FORM
+        ========================================== */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 700;
+        }
+
+        .form-control {
+            width: 100%;
+
+            padding: 12px;
+
+            border: 1px solid #ccc;
+            border-radius: 8px;
+
+            font-size: 16px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #c9362b;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+        }
+
+        .error-message {
+            background: #fde8e6;
+            color: #a82b22;
+
+            padding: 12px;
+            border-radius: 8px;
+
+            margin-bottom: 20px;
+        }
+
+        /* =========================================
+           MENU
+        ========================================== */
+
+        .menu-item {
+            display: grid;
+            grid-template-columns: 1fr 180px;
+
+            align-items: center;
+            gap: 20px;
+
+            padding: 16px 0;
+
+            border-bottom: 1px solid #eee;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-item-name {
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .menu-item-description {
+            color: #777;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .menu-item-price {
+            color: #555;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .item-input {
+            width: 100%;
+
+            padding: 11px;
+
+            border: 1px solid #ccc;
+            border-radius: 8px;
+
+            font-size: 16px;
+        }
+
+        /* =========================================
+           TOTAL
+        ========================================== */
+
+        .total-box {
+            background: #222;
+            color: white;
+
+            padding: 20px;
+
+            border-radius: 10px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-top: 20px;
+        }
+
+        .total-label {
+            font-size: 16px;
+        }
+
+        .total-value {
+            font-size: 25px;
+            font-weight: 700;
+        }
+
+        /* =========================================
+           PAYMENT NOTICE
+        ========================================== */
+
+        .payment-notice {
+            background: #fff8e5;
+            border: 1px solid #f1d98a;
+
+            padding: 15px;
+
+            border-radius: 9px;
+
+            margin-bottom: 20px;
+
+            line-height: 1.5;
+        }
+
+        .payment-notice strong {
+            color: #8a6400;
+        }
+
+        /* =========================================
+           BUTTON
+        ========================================== */
+
+        .create-btn {
+            width: 100%;
+
+            border: none;
+            border-radius: 9px;
+
+            padding: 15px;
+
+            background: #c9362b;
+            color: white;
+
+            font-size: 17px;
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+        .create-btn:hover {
+            background: #a82b22;
+        }
+
+        /* =========================================
+           MOBILE
+        ========================================== */
+
+        @media (max-width: 700px) {
+
+            .page-header-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .menu-item {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .total-box {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 7px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="page-header">
+
+    <div class="page-header-inner">
+
+        <div>
+
+            <h1>
+                🏪 New Counter Order
+            </h1>
+
+            <p>
+                Capture an order placed directly at Hlophe
+            </p>
+
+        </div>
+
+        <a
+            href="{% url 'staff_dashboard' %}"
+            class="back-btn"
+        >
+            ← Staff Dashboard
+        </a>
+
+    </div>
+
+</header>
+
+
+<div class="container">
+
+    <span class="counter-badge">
+        OVER THE COUNTER
+    </span>
+
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+
+        {% if form.non_field_errors %}
+
+            <div class="error-message">
+
+                {% for error in form.non_field_errors %}
+
+                    {{ error }}
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =====================================
+             CUSTOMER
+        ====================================== -->
+
+        <div class="card">
+
+            <h2>
+                Customer Details
+            </h2>
+
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label for="{{ form.customer_name.id_for_label }}">
+                        Customer Name *
+                    </label>
+
+                    {{ form.customer_name }}
+
+                    {% for error in form.customer_name.errors %}
+                        <div class="error-message">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.whatsapp_number.id_for_label }}">
+                        WhatsApp / Cellphone Number *
+                    </label>
+
+                    {{ form.whatsapp_number }}
+
+                    {% for error in form.whatsapp_number.errors %}
+                        <div class="error-message">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="{{ form.notes.id_for_label }}">
+                    Special Instructions
+                </label>
+
+                {{ form.notes }}
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================
+             ORDER ITEMS
+        ====================================== -->
+
+        <div class="card">
+
+            <h2>
+                Order Items
+            </h2>
+
+
+            {% for item in menu_items %}
+
+                <div class="menu-item">
+
+                    <div>
+
+                        <div class="menu-item-name">
+                            {{ item.name }}
+                        </div>
+
+                        {% if item.description %}
+
+                            <div class="menu-item-description">
+                                {{ item.description }}
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if item.pricing_type == "fixed" %}
+
+                            <div class="menu-item-price">
+                                R{{ item.price }} each
+                            </div>
+
+                        {% else %}
+
+                            <div class="menu-item-price">
+                                Enter the rand amount required
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div>
+
+                        {% if item.pricing_type == "amount" %}
+
+                            <input
+                                type="number"
+                                name="amount_{{ item.id }}"
+                                class="item-input amount-input"
+                                min="0"
+                                step="0.01"
+                                placeholder="R amount"
+                            >
+
+                        {% elif item.pricing_type == "fixed" %}
+
+                            <input
+                                type="number"
+                                name="quantity_{{ item.id }}"
+                                class="item-input quantity-input"
+                                min="0"
+                                step="1"
+                                value="0"
+                                data-price="{{ item.price }}"
+                            >
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <p>
+                    No menu items are currently available.
+                </p>
+
+            {% endfor %}
+
+
+            <div class="total-box">
+
+                <span class="total-label">
+                    Estimated Order Total
+                </span>
+
+                <span
+                    class="total-value"
+                    id="estimatedTotal"
+                >
+                    R0.00
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================
+             PAYMENT
+        ====================================== -->
+
+        <div class="card">
+
+            <h2>
+                Payment
+            </h2>
+
+            <div class="payment-notice">
+
+                <strong>
+                    Payment starts as Pending.
+                </strong>
+
+                Once the customer has paid at the counter,
+                mark the order as
+                <strong>Paid</strong>
+                from the Staff Dashboard.
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="create-btn"
+            >
+                🏪 Create Counter Order
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<script>
+
+    function updateTotal() {
+
+        let total = 0;
+
+
+        // =========================================
+        // RAND AMOUNT PRODUCTS
+        // =========================================
+
+        document
+            .querySelectorAll(".amount-input")
+            .forEach(function(input) {
+
+                const amount =
+                    parseFloat(input.value) || 0;
+
+                total += amount;
+
+            });
+
+
+        // =========================================
+        // FIXED PRICE PRODUCTS
+        // =========================================
+
+        document
+            .querySelectorAll(".quantity-input")
+            .forEach(function(input) {
+
+                const quantity =
+                    parseInt(input.value) || 0;
+
+                const price =
+                    parseFloat(
+                        input.dataset.price
+                    ) || 0;
+
+                total += quantity * price;
+
+            });
+
+
+        document.getElementById(
+            "estimatedTotal"
+        ).textContent =
+            "R" + total.toFixed(2);
+
+    }
+
+
+    document
+        .querySelectorAll(
+            ".amount-input, .quantity-input"
+        )
+        .forEach(function(input) {
+
+            input.addEventListener(
+                "input",
+                updateTotal
+            );
+
+        });
+
+</script>
+
+
+</body>
+
+</html>

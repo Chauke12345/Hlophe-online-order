@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Hlophe Staff Login</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            padding: 32px;
+            border-radius: 14px;
+
+            box-shadow:
+                0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .login-brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .login-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+            background: #c9362b;
+
+            font-size: 30px;
+        }
+
+        .login-brand h1 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        .login-brand p {
+            margin: 7px 0 0;
+            color: #777;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 700;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+
+            border: none;
+            border-radius: 8px;
+
+            background: #c9362b;
+            color: white;
+
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .login-btn:hover {
+            background: #a82b22;
+        }
+
+        .error-message {
+            background: #fde8e6;
+            color: #a82b22;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="login-card">
+
+    <div class="login-brand">
+
+        <div class="login-icon">
+            🔥
+        </div>
+
+        <h1>
+            Hlophe Staff Login
+        </h1>
+
+        <p>
+            Sign in to manage customer orders
+        </p>
+
+    </div>
+
+{% if messages %}
+
+    {% for message in messages %}
+
+        <div class="error-message">
+            {{ message }}
+        </div>
+
+    {% endfor %}
+
+{% endif %}
+
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    <div class="form-group">
+
+        <label for="id_username">
+            Username
+        </label>
+
+        <input
+            type="text"
+            name="username"
+            id="id_username"
+            required
+        >
+
+    </div>
+
+    <div class="form-group">
+
+        <label for="id_password">
+            Password
+        </label>
+
+        <input
+            type="password"
+            name="password"
+            id="id_password"
+            required
+        >
+
+    </div>
+
+    <button
+        type="submit"
+        class="login-btn"
+    >
+        Staff Login
+    </button>
+
+</form>
+</div>
+
+
+</body>
+
+</html>
