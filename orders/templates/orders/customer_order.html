@@ -445,6 +445,48 @@
     background: #444;
     transform: translateY(-1px);
 }
+/* =========================================
+   HEADER LOCATION
+========================================= */
+
+.header-location {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #ffffff;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.header-location span {
+    font-size: 20px;
+}
+
+.header-location strong {
+    display: block;
+    color: #f4a623;
+    font-size: 13px;
+    margin-bottom: 2px;
+}
+
+.header-location small {
+    display: block;
+    color: #e5e5e5;
+    font-size: 12px;
+}
+
+
+/* MOBILE */
+@media (max-width: 768px) {
+
+    .header-location {
+        width: 100%;
+        justify-content: center;
+        text-align: left;
+        margin-bottom: 10px;
+    }
+
+}
 
 
     /* =========================
@@ -537,6 +579,21 @@
 
     <div class="header-inner">
 
+        <!-- LEFT: LOCATION -->
+        <div class="header-location">
+            <span>📍</span>
+
+            <div>
+                <strong>Find Us</strong>
+                <small>
+                    4393 Ext 66, Lanner Drive<br>
+                    Riverside View, 2189
+                </small>
+            </div>
+        </div>
+
+
+        <!-- CENTRE: BRAND -->
         <div class="brand">
 
             <div class="brand-icon">
@@ -544,6 +601,7 @@
             </div>
 
             <div class="brand-content">
+
                 <h1>
                     Hlophe Online Ordering
                 </h1>
@@ -551,10 +609,10 @@
                 <div class="tagline">
                     Order. Braai. Collect.
                 </div>
+
             </div>
 
         </div>
-
 
         <div class="portal-links">
 
