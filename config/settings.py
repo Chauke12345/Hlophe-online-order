@@ -198,6 +198,12 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
+# Project-level static files
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+# Collected production static files
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STORAGES = {
@@ -208,7 +214,6 @@ STORAGES = {
         ),
     },
 }
-
 
 # =========================================================
 # MEDIA FILES
