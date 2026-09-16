@@ -870,6 +870,372 @@ def staff_order_history(request):
         },
     )
 
+# =========================================================
+# STAFF DAILY MANAGER REPORT
+# =========================================================
+
+@user_passes_test(
+    is_hlophe_staff,
+    login_url="/staff/login/"
+)
+def staff_daily_report(request):
+
+    shop = Shop.objects.filter(
+        is_active=True
+    ).first()
+
+    if not shop:
+        return render(
+            request,
+            "orders/no_shop.html",
+        )
+
+    # =====================================================
+    # REPORT DATE
+    # =====================================================
+
+    from django.utils import timezone
+    from datetime import datetime
+    from django.db.models import Sum, Count, Q
+    from django.db.models.functions import Coalesce
+
+    selected_date_string = request.GET.get(
+        "date"
+    )
+
+    if selected_date_string:
+
+        try:
+            selected_date = datetime.strptime(
+                selected_date_string,
+                "%Y-%m-%d"
+            ).date()
+
+        except ValueError:
+            selected_date = timezone.localdate()
+
+    else:
+        selected_date = timezone.localdate()
+
+    # =====================================================
+    # ORDERS FOR SELECTED DAY
+    # =====================================================
+
+    orders = (
+        Order.objects
+        .filter(
+            shop=shop,
+            created_at__date=selected_date,
+        )
+        .select_related(
+            "braai_master",
+        )
+        .prefetch_related(
+            "items__menu_item",
+        )
+        .order_by(
+            "-created_at"
+        )
+    )
+
+    # =====================================================
+    # ORDER COUNTS
+    # =====================================================
+
+    total_orders = orders.count()
+
+    collected_orders = orders.filter(
+        status="collected"
+    ).count()
+
+    cancelled_orders = orders.filter(
+        status="cancelled"
+    ).count()
+
+    new_orders = orders.filter(
+        status="new"
+    ).count()
+
+    preparing_orders = orders.filter(
+        status="preparing"
+    ).count()
+
+    braaiing_orders = orders.filter(
+        status="braaiing"
+    ).count()
+
+    ready_orders = orders.filter(
+        status="ready"
+    ).count()
+
+    in_progress_orders = orders.filter(
+        status__in=[
+            "new",
+            "preparing",
+            "braaiing",
+            "ready",
+        ]
+    ).count()
+
+    # =====================================================
+    # ORDER SOURCES
+    # =====================================================
+
+    online_orders = orders.filter(
+        order_source="online"
+    ).count()
+
+    counter_orders = orders.filter(
+        order_source="counter"
+    ).count()
+
+    # =====================================================
+    # ORDER TYPES
+    # =====================================================
+
+    premises_orders = orders.filter(
+        order_type="premises"
+    ).count()
+
+    collection_orders = orders.filter(
+        order_type="collection"
+    ).count()
+
+    # =====================================================
+    # PAYMENT COUNTS
+    # =====================================================
+
+    paid_orders = orders.filter(
+        payment_status="paid"
+    ).count()
+
+    pending_payment_orders = orders.filter(
+        payment_status="pending"
+    ).count()
+
+    # =====================================================
+    # SALES
+    #
+    # Cancelled orders are excluded.
+    # final_total is preferred.
+    # estimated_total is used when final_total is empty.
+    # =====================================================
+
+    valid_orders = orders.exclude(
+        status="cancelled"
+    )
+
+    total_sales = Decimal("0.00")
+    paid_sales = Decimal("0.00")
+    outstanding_sales = Decimal("0.00")
+
+    for order in valid_orders:
+
+        amount = (
+            order.final_total
+            if order.final_total is not None
+            else order.estimated_total
+        )
+
+        amount = amount or Decimal("0.00")
+
+        total_sales += amount
+
+        if order.payment_status == "paid":
+            paid_sales += amount
+        else:
+            outstanding_sales += amount
+
+    if valid_orders.count() > 0:
+
+        average_order_value = (
+            total_sales
+            / Decimal(valid_orders.count())
+        )
+
+    else:
+
+        average_order_value = Decimal("0.00")
+
+    # =====================================================
+    # TOP MENU ITEMS
+    # =====================================================
+
+    order_items = (
+        OrderItem.objects
+        .filter(
+            order__shop=shop,
+            order__created_at__date=selected_date,
+        )
+        .exclude(
+            order__status="cancelled"
+        )
+        .select_related(
+            "menu_item"
+        )
+    )
+
+    item_report = {}
+
+    for item in order_items:
+
+        item_name = item.menu_item.name
+
+        if item_name not in item_report:
+
+            item_report[item_name] = {
+                "name": item_name,
+                "pricing_type": (
+                    item.menu_item.pricing_type
+                ),
+                "quantity": 0,
+                "order_count": 0,
+                "value": Decimal("0.00"),
+            }
+
+        item_report[item_name][
+            "order_count"
+        ] += 1
+
+        # Fixed-price products
+        if (
+            item.menu_item.pricing_type
+            == "fixed"
+        ):
+
+            item_report[item_name][
+                "quantity"
+            ] += item.quantity
+
+            if item.final_amount is not None:
+
+                item_value = item.final_amount
+
+            elif item.unit_price is not None:
+
+                item_value = (
+                    item.unit_price
+                    * item.quantity
+                )
+
+            else:
+
+                item_value = (
+                    item.requested_amount
+                )
+
+        # Amount-based products such as meat
+        else:
+
+            if item.final_amount is not None:
+
+                item_value = (
+                    item.final_amount
+                )
+
+            else:
+
+                item_value = (
+                    item.requested_amount
+                )
+
+        item_report[item_name][
+            "value"
+        ] += (
+            item_value
+            or Decimal("0.00")
+        )
+
+    top_items = sorted(
+        item_report.values(),
+        key=lambda item: (
+            item["value"],
+            item["order_count"],
+        ),
+        reverse=True,
+    )
+
+    # =====================================================
+    # BRAAI MASTER ACTIVITY
+    # =====================================================
+
+    braai_master_report = (
+        orders
+        .exclude(
+            braai_master__isnull=True
+        )
+        .values(
+            "braai_master__name"
+        )
+        .annotate(
+            order_count=Count("id")
+        )
+        .order_by(
+            "-order_count"
+        )
+    )
+
+    # =====================================================
+    # CONTEXT
+    # =====================================================
+
+    context = {
+
+        "shop": shop,
+        "selected_date": selected_date,
+
+        # Orders
+        "orders": orders,
+        "total_orders": total_orders,
+        "collected_orders": collected_orders,
+        "cancelled_orders": cancelled_orders,
+        "in_progress_orders": in_progress_orders,
+
+        # Individual statuses
+        "new_orders": new_orders,
+        "preparing_orders": preparing_orders,
+        "braaiing_orders": braaiing_orders,
+        "ready_orders": ready_orders,
+
+        # Sources
+        "online_orders": online_orders,
+        "counter_orders": counter_orders,
+
+        # Types
+        "premises_orders": premises_orders,
+        "collection_orders": collection_orders,
+
+        # Payments
+        "paid_orders": paid_orders,
+        "pending_payment_orders": (
+            pending_payment_orders
+        ),
+
+        # Sales
+        "total_sales": total_sales,
+        "paid_sales": paid_sales,
+        "outstanding_sales": (
+            outstanding_sales
+        ),
+        "average_order_value": (
+            average_order_value
+        ),
+
+        # Items
+        "top_items": top_items,
+
+        # Braai masters
+        "braai_master_report": (
+            braai_master_report
+        ),
+    }
+
+    return render(
+        request,
+        "orders/staff_daily_report.html",
+        context,
+    )
+
 
 # =========================================================
 # EDVANCE OWNER DASHBOARD

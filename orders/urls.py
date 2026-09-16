@@ -69,6 +69,12 @@ path(
     name="staff_order_history",
 ),
 
+path(
+    "staff/reports/daily/",
+    views.staff_daily_report,
+    name="staff_daily_report",
+),
+
     # =========================================================
     # MANAGEMENT LOGIN / LOGOUT
     # =========================================================
