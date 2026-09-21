@@ -577,27 +577,29 @@
 </head>
 
 <body>
-
     <!-- Back to Shisanyama Connect marketplace -->
     <div style="max-width: 1100px; margin: 18px auto 0; padding: 0 20px;">
         <a
             href="{% url 'home' %}"
             style="
-                display: inline-block;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
                 text-decoration: none;
-                color: #222;
+                color: #ffffff;
                 font-weight: 700;
                 font-size: 14px;
-                padding: 10px 14px;
-                background: #ffffff;
-                border: 1px solid #dddddd;
-                border-radius: 8px;
+                padding: 11px 16px;
+                background: #111111;
+                border: 1px solid #2b2b2b;
+                border-radius: 10px;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.12);
             "
         >
-            &larr; Back to Shisanyama Connect
+            <span aria-hidden="true">&larr;</span>
+            <span>Back to Shisanyama Connect</span>
         </a>
     </div>
-
 <header class="header">
 
     <div class="header-inner">
@@ -611,11 +613,10 @@
                 <small>
                     {% if shop.address %}
                         {{ shop.address|linebreaksbr }}
+                    {% elif shop.location %}
+                        {{ shop.location }}
                     {% endif %}
-
-                    {% if shop.location %}
-                        <br>{{ shop.location }}
-                    {% endif %}
+                </small>
                 </small>
             </div>
         </div>
