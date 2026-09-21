@@ -39,6 +39,32 @@ from .models import (
 # CUSTOMER ORDER PAGE
 # =========================================================
 
+
+# =========================================================
+# PUBLIC SHISANYAMA CONNECT HOMEPAGE
+# =========================================================
+
+def home(request):
+    """
+    Public Shisanyama Connect marketplace homepage.
+    Customers can discover active businesses without logging in.
+    """
+    shops = Shop.objects.filter(
+        is_active=True
+    ).order_by("name")
+
+    context = {
+        "shops": shops[:6],
+        "total_shops": shops.count(),
+    }
+
+    return render(
+        request,
+        "orders/home.html",
+        context,
+    )
+
+
 def customer_order(request, shop_slug):
 
     shop = get_object_or_404(
