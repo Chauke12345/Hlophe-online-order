@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>{{ shop.name }} Order History</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            color: #222;
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .history-header {
+            background: #161616;
+            color: white;
+            padding: 28px 20px;
+        }
+
+        .history-header-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .history-header h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .history-header p {
+            margin: 7px 0 0;
+            color: #f1b24a;
+        }
+
+
+        /* =========================
+           CONTAINER
+        ========================= */
+
+        .history-container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+
+        /* =========================
+           NAVIGATION
+        ========================= */
+
+        .history-nav {
+            margin-bottom: 25px;
+        }
+
+        .dashboard-link {
+            display: inline-block;
+            padding: 12px 18px;
+            background: #161616;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+        }
+
+        .dashboard-link:hover {
+            background: #c9362b;
+        }
+
+
+        /* =========================
+           ORDER CARD
+        ========================= */
+
+        .order-card {
+            background: white;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 22px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        .order-card h2 {
+            margin: 0 0 20px;
+        }
+
+
+        /* =========================
+           ORDER INFORMATION
+        ========================= */
+
+        .order-meta {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .meta-box {
+            background: #f7f7f7;
+            border-radius: 10px;
+            padding: 14px;
+        }
+
+        .meta-label {
+            display: block;
+            color: #777;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .meta-value {
+            display: block;
+            font-weight: 700;
+        }
+
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        .status {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .status-collected {
+            background: #e5f6ea;
+            color: #217a3c;
+        }
+
+        .status-cancelled {
+            background: #fde8e6;
+            color: #b52e24;
+        }
+        /* =========================
+   HISTORY STATUS COLOURS
+========================= */
+
+.history-status-box {
+    border: 2px solid transparent;
+}
+
+.history-status-collected {
+    background: #e4f7e9;
+    border-color: #39a85b;
+    color: #176b31;
+}
+
+.history-status-cancelled {
+    background: #f1f1f1;
+    border-color: #888;
+    color: #555;
+}
+
+.history-status-box .meta-label {
+    color: inherit;
+    opacity: 0.75;
+}
+
+.history-status-box .meta-value {
+    font-size: 17px;
+    font-weight: 800;
+}
+
+
+        /* =========================
+           ORDER ITEMS
+        ========================= */
+
+        .order-items {
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+            margin: 20px 0;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            padding: 10px 0;
+        }
+
+        .item-name {
+            font-weight: 600;
+        }
+
+        .item-price {
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+
+        /* =========================
+           TOTALS
+        ========================= */
+
+        .totals {
+            background: #fff5dc;
+            border: 1px solid #e7a52a;
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 5px 0;
+        }
+
+        .final-total {
+            font-size: 19px;
+            font-weight: 800;
+        }
+
+
+        /* =========================
+           EMPTY HISTORY
+        ========================= */
+
+        .empty-history {
+            background: white;
+            border-radius: 14px;
+            padding: 40px 20px;
+            text-align: center;
+            color: #666;
+        }
+
+        .history-badges {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 10px 0 20px;
+}
+
+.source-badge,
+.payment-badge {
+    display: inline-block;
+    padding: 7px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.counter-source {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.online-source {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.payment-badge.paid {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.payment-badge.pending {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            .history-header h1 {
+                font-size: 24px;
+            }
+
+            .history-container {
+                margin-top: 18px;
+                padding: 0 12px;
+            }
+
+            .order-card {
+                padding: 18px;
+            }
+
+            .order-meta {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .order-item {
+                align-items: flex-start;
+            }
+
+            .dashboard-link {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="history-header">
+
+    <div class="history-header-inner">
+
+        <h1>
+            {{ shop.name }} Order History
+        </h1>
+
+        <p>
+            Completed and cancelled customer orders
+        </p>
+
+    </div>
+
+</header>
+
+
+<div class="history-container">
+
+
+    <!-- =========================
+         BACK TO DASHBOARD
+    ========================== -->
+
+    <div class="history-nav">
+
+        <a
+            href="{% url 'staff_dashboard' %}"
+            class="dashboard-link"
+        >
+            ← Back to Staff Dashboard
+        </a>
+
+    </div>
+
+
+  <!-- =========================
+     ORDER HISTORY
+========================== -->
+
+{% for order in orders %}
+
+    <div class="order-card">
+
+        <h2>
+            Order #{{ order.id }}
+        </h2>
+
+
+        <!-- =========================
+             ORDER SOURCE / PAYMENT
+        ========================== -->
+
+        <div class="history-badges">
+
+            {% if order.order_source == "counter" %}
+
+                <span class="source-badge counter-source">
+                    🏪 Counter Order
+                </span>
+
+                {% if order.payment_status == "paid" %}
+
+                    <span class="payment-badge paid">
+                        ✓ Paid
+                    </span>
+
+                {% else %}
+
+                    <span class="payment-badge pending">
+                        Payment Pending
+                    </span>
+
+                {% endif %}
+
+            {% else %}
+
+                <span class="source-badge online-source">
+                    🌐 Online Order
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- =========================
+             CUSTOMER INFORMATION
+        ========================== -->
+
+        <div class="order-meta">
+
+            <div class="meta-box">
+
+                <span class="meta-label">
+                    Customer
+                </span>
+
+                <span class="meta-value">
+                    {{ order.customer_name }}
+                </span>
+
+            </div>
+
+
+            <div class="meta-box">
+
+                <span class="meta-label">
+                    Contact
+                </span>
+
+                <span class="meta-value">
+                    {{ order.whatsapp_number }}
+                </span>
+
+            </div>
+
+
+            <div class="meta-box history-status-box history-status-{{ order.status }}">
+
+                <span class="meta-label">
+                    Status
+                </span>
+
+                <span class="meta-value">
+                    {{ order.get_status_display }}
+                </span>
+
+            </div>
+
+        </div>
+
+            <!-- =========================
+                 ITEMS
+            ========================== -->
+
+            <div class="order-items">
+
+                {% for item in order.items.all %}
+
+                    <div class="order-item">
+
+                        <div class="item-name">
+
+                            {{ item.menu_item.name }}
+
+                            {% if item.menu_item.pricing_type == "fixed" %}
+
+                                ×{{ item.quantity }}
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="item-price">
+
+                            {% if item.final_amount %}
+
+                                R{{ item.final_amount }}
+
+                            {% else %}
+
+                                R{{ item.requested_amount }}
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% empty %}
+
+                    <p>
+                        No items recorded for this order.
+                    </p>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- =========================
+                 TOTALS
+            ========================== -->
+
+            <div class="totals">
+
+                <div class="total-row">
+
+                    <span>
+                        Estimated Price
+                    </span>
+
+                    <strong>
+                        R{{ order.estimated_total }}
+                    </strong>
+
+                </div>
+
+
+                {% if order.final_total %}
+
+                    <div class="total-row final-total">
+
+                        <span>
+                            Final Total
+                        </span>
+
+                        <span>
+                            R{{ order.final_total }}
+                        </span>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            {% if order.braai_master %}
+
+                <p>
+                    <strong>Braai Master:</strong>
+                    {{ order.braai_master.name }}
+                </p>
+
+            {% endif %}
+
+
+            <p>
+                <strong>Order Date:</strong>
+                {{ order.created_at|date:"d M Y, H:i" }}
+            </p>
+
+        </div>
+
+
+    {% empty %}
+
+        <div class="empty-history">
+
+            <h2>
+                No Order History
+            </h2>
+
+            <p>
+                Collected and cancelled orders will appear here.
+            </p>
+
+        </div>
+
+    {% endfor %}
+
+
+</div>
+
+
+</body>
+
+</html>

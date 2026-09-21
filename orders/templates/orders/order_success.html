@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Order Confirmed
+    </title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            color: #222;
+        }
+
+        .confirmation-card {
+            width: 100%;
+            max-width: 700px;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .success-icon {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            margin: 0 0 5px;
+            font-size: 32px;
+        }
+
+        .order-number {
+            color: #777;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .order-items {
+            margin: 25px 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 12px 0;
+        }
+
+        .item-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .item-name {
+            font-weight: 600;
+        }
+
+        .item-meta {
+            color: #777;
+            font-size: 14px;
+        }
+
+        .item-amount {
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .total-box {
+            background: #fff5dc;
+            border: 2px solid #e7a52a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .total-label {
+            color: #666;
+            font-size: 15px;
+        }
+
+        .total-amount {
+            font-size: 30px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .info-box {
+            background: #f3f3f3;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+
+        .info-box p {
+            margin: 8px 0;
+        }
+
+        .status {
+            display: inline-block;
+            font-weight: bold;
+            color: #c9362b;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 18px;
+            background: #161616;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            background: #c9362b;
+        }
+
+        .action-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.done-btn,
+.back-link {
+    flex: 1;
+    display: block;
+    margin-top: 0;
+    padding: 14px 18px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.done-btn {
+    background: #c9362b;
+    color: white;
+}
+
+.done-btn:hover {
+    background: #a82b22;
+}
+
+.back-link {
+    background: #161616;
+    color: white;
+}
+
+.back-link:hover {
+    background: #333;
+}
+
+
+        /* ================================
+           MOBILE
+        ================================= */
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 12px;
+            }
+
+            .confirmation-card {
+                margin: 15px auto;
+                padding: 22px 18px;
+            }
+
+            h1 {
+                font-size: 27px;
+            }
+
+            .success-icon {
+                font-size: 36px;
+            }
+
+            .total-amount {
+                font-size: 26px;
+            }
+
+            .order-item {
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            .back-link {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="confirmation-card">
+
+
+    <div class="success-icon">
+        🔥
+    </div>
+
+
+    <h1>
+        Order Received
+    </h1>
+
+
+    <div class="order-number">
+        Order #{{ order.id }}
+    </div>
+
+
+    <p>
+        Thank you,
+        <strong>
+            {{ order.customer_name }}
+        </strong>.
+    </p>
+
+
+    <p>
+        Your order has been received by {{ order.shop.name }}.
+    </p>
+
+
+    {% if order.braai_master %}
+
+        <p>
+            <strong>
+                Braai Master:
+            </strong>
+
+            {{ order.braai_master.name }}
+        </p>
+
+    {% endif %}
+
+
+    <!-- ==========================================
+         ORDER ITEMS
+    =========================================== -->
+
+    <div class="order-items">
+
+        {% for item in order.items.all %}
+
+            <div class="order-item">
+
+                <div class="item-details">
+
+                    <div class="item-name">
+
+                        {{ item.menu_item.name }}
+
+                        {% if item.menu_item.pricing_type == "fixed" %}
+                            ×{{ item.quantity }}
+                        {% endif %}
+
+                    </div>
+
+
+                    {% if item.menu_item.pricing_type == "fixed" %}
+
+                        <div class="item-meta">
+
+                            R{{ item.unit_price }}
+                            each
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="item-amount">
+
+                    R{{ item.requested_amount }}
+
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <p>
+                No items found for this order.
+            </p>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- ==========================================
+         TOTAL
+    =========================================== -->
+
+    <div class="total-box">
+
+        <div class="total-label">
+            Requested Total
+        </div>
+
+        <div class="total-amount">
+            R{{ order.estimated_total }}
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+         ORDER INFORMATION
+    =========================================== -->
+
+    <div class="info-box">
+
+        {% if order.order_type == "premises" %}
+
+            <p>
+                <strong>
+                    Ordering at {{ order.shop.name }}
+                </strong>
+            </p>
+
+            <p>
+                Please proceed to the counter to confirm your order
+                and make payment.
+            </p>
+
+        {% else %}
+
+            <p>
+                <strong>
+                    Collection Order
+                </strong>
+            </p>
+
+            <p>
+                Your order has been received and will be prepared.
+            </p>
+
+            <p>
+                You will be notified when your order is ready
+                for collection.
+            </p>
+
+            <p>
+                Payment will be made when you collect your order.
+            </p>
+
+        {% endif %}
+
+
+        <p>
+            Current status:
+
+            <span class="status">
+                {{ order.get_status_display }}
+            </span>
+
+        </p>
+
+    </div>
+
+
+   <div class="action-buttons">
+
+    <a
+        href="{% url 'customer_order' shop_slug=order.shop.slug %}"
+        class="done-btn"
+    >
+        ✓ Done
+    </a>
+
+    <a
+        href="{% url 'customer_order' shop_slug=order.shop.slug %}"
+        class="back-link"
+    >
+        Place Another Order →
+    </a>
+
+</div>
+
+
+</div>
+
+
+</body>
+
+</html>

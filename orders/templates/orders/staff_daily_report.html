@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>{{ shop.name }} Daily Manager Report</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            color: #222;
+        }
+
+
+        /* =========================================
+           HEADER
+        ========================================== */
+
+        .report-header {
+            background: #161616;
+            color: white;
+            padding: 24px 20px;
+        }
+
+        .report-header-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .report-header h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .report-header p {
+            margin: 6px 0 0;
+            color: #f1b24a;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .header-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 11px 17px;
+            min-height: 42px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .back-btn {
+            background: white;
+            color: #222;
+        }
+
+        .print-btn {
+            background: #c9362b;
+            color: white;
+        }
+
+
+        /* =========================================
+           MAIN CONTAINER
+        ========================================== */
+
+        .report-container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px 40px;
+        }
+
+
+        /* =========================================
+           DATE FILTER
+        ========================================== */
+
+        .date-card {
+            background: white;
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        .date-form {
+            display: flex;
+            align-items: end;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .date-group {
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .date-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        .date-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+            background: white;
+        }
+
+        .generate-btn {
+            padding: 13px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #c9362b;
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+
+        /* =========================================
+           REPORT TITLE
+        ========================================== */
+
+        .report-title {
+            margin-bottom: 22px;
+        }
+
+        .report-title h2 {
+            margin: 0 0 5px;
+            font-size: 26px;
+        }
+
+        .report-title p {
+            margin: 0;
+            color: #777;
+        }
+
+
+        /* =========================================
+           SUMMARY CARDS
+        ========================================== */
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        .summary-label {
+            display: block;
+            color: #777;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .summary-value {
+            display: block;
+            font-size: 27px;
+            font-weight: 800;
+        }
+
+        .summary-card.sales {
+            border-top: 4px solid #39a85b;
+        }
+
+        .summary-card.orders {
+            border-top: 4px solid #e7a52a;
+        }
+
+        .summary-card.progress {
+            border-top: 4px solid #4389d8;
+        }
+
+        .summary-card.cancelled {
+            border-top: 4px solid #c9362b;
+        }
+
+
+        /* =========================================
+           SECTIONS
+        ========================================== */
+
+        .report-section {
+            background: white;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        .report-section h3 {
+            margin: 0 0 20px;
+            font-size: 21px;
+            border-bottom: 2px solid #f1b24a;
+            padding-bottom: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .stat-box {
+            background: #f7f7f7;
+            padding: 15px;
+            border-radius: 9px;
+        }
+
+        .stat-label {
+            display: block;
+            color: #777;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 19px;
+            font-weight: 800;
+        }
+
+
+        /* =========================================
+           TABLES
+        ========================================== */
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        th {
+            background: #161616;
+            color: white;
+            text-align: left;
+            padding: 12px;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        tr:hover td {
+            background: #fafafa;
+        }
+
+        .money {
+            font-weight: 700;
+        }
+
+
+        /* =========================================
+           STATUS
+        ========================================== */
+
+        .status {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-new {
+            background: #fff4cc;
+            color: #795600;
+        }
+
+        .status-preparing {
+            background: #fff0dc;
+            color: #8a4700;
+        }
+
+        .status-braaiing {
+            background: #ffe4e1;
+            color: #9b211a;
+        }
+
+        .status-ready {
+            background: #e1f6e8;
+            color: #176b31;
+        }
+
+        .status-collected {
+            background: #e1efff;
+            color: #1d5d9f;
+        }
+
+        .status-cancelled {
+            background: #eeeeee;
+            color: #555;
+        }
+
+        .paid {
+            color: #176b31;
+            font-weight: 700;
+        }
+
+        .pending {
+            color: #8a5700;
+            font-weight: 700;
+        }
+
+
+        /* =========================================
+           EMPTY STATE
+        ========================================== */
+
+        .empty-message {
+            padding: 20px;
+            background: #f7f7f7;
+            border-radius: 8px;
+            text-align: center;
+            color: #777;
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================== */
+
+        @media (max-width: 850px) {
+
+            .report-header-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+
+        @media (max-width: 550px) {
+
+            .report-container {
+                padding: 0 12px 30px;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .header-btn {
+                flex: 1;
+            }
+
+            .date-form {
+                display: block;
+            }
+
+            .generate-btn {
+                width: 100%;
+                margin-top: 12px;
+            }
+
+            .report-section {
+                padding: 18px;
+            }
+        }
+
+
+        /* =========================================
+           PRINT
+        ========================================== */
+
+        @media print {
+
+            body {
+                background: white;
+            }
+
+            .report-header {
+                background: white;
+                color: black;
+                padding: 0 0 20px;
+            }
+
+            .report-header p {
+                color: #555;
+            }
+
+            .header-actions,
+            .date-card {
+                display: none;
+            }
+
+            .report-container {
+                max-width: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            .summary-card,
+            .report-section {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                break-inside: avoid;
+            }
+
+            th {
+                background: #eee;
+                color: black;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     HEADER
+========================================== -->
+
+<header class="report-header">
+
+    <div class="report-header-inner">
+
+        <div>
+
+            <h1>
+                {{ shop.name }} Daily Manager Report
+            </h1>
+
+            <p>
+                Daily orders and sales performance
+            </p>
+
+        </div>
+
+
+        <div class="header-actions">
+
+            <a
+                href="{% url 'staff_dashboard' %}"
+                class="header-btn back-btn"
+            >
+                ← Staff Dashboard
+            </a>
+
+            <button
+                type="button"
+                class="header-btn print-btn"
+                onclick="window.print()"
+            >
+                Print Report
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<main class="report-container">
+
+
+    <!-- =========================================
+         DATE SELECTOR
+    ========================================== -->
+
+    <section class="date-card">
+
+        <form
+            method="GET"
+            class="date-form"
+        >
+
+            <div class="date-group">
+
+                <label for="date">
+                    Report Date
+                </label>
+
+                <input
+                    type="date"
+                    id="date"
+                    name="date"
+                    value="{{ selected_date|date:'Y-m-d' }}"
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="generate-btn"
+            >
+                Generate Report
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- =========================================
+         TITLE
+    ========================================== -->
+
+    <div class="report-title">
+
+        <h2>
+            {{ shop.name }}
+        </h2>
+
+        <p>
+            Report for
+            {{ selected_date|date:"l, d F Y" }}
+        </p>
+
+    </div>
+
+
+    <!-- =========================================
+         MAIN SUMMARY
+    ========================================== -->
+
+    <section class="summary-grid">
+
+        <div class="summary-card orders">
+
+            <span class="summary-label">
+                Total Orders
+            </span>
+
+            <span class="summary-value">
+                {{ total_orders }}
+            </span>
+
+        </div>
+
+
+        <div class="summary-card sales">
+
+            <span class="summary-label">
+                Total Sales
+            </span>
+
+            <span class="summary-value">
+                R{{ total_sales|floatformat:2 }}
+            </span>
+
+        </div>
+
+
+        <div class="summary-card progress">
+
+            <span class="summary-label">
+                In Progress
+            </span>
+
+            <span class="summary-value">
+                {{ in_progress_orders }}
+            </span>
+
+        </div>
+
+
+        <div class="summary-card cancelled">
+
+            <span class="summary-label">
+                Cancelled
+            </span>
+
+            <span class="summary-value">
+                {{ cancelled_orders }}
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         SALES
+    ========================================== -->
+
+    <section class="report-section">
+
+        <h3>
+            Sales Summary
+        </h3>
+
+        <div class="stats-grid">
+
+            <div class="stat-box">
+                <span class="stat-label">
+                    Total Sales
+                </span>
+                <span class="stat-value">
+                    R{{ total_sales|floatformat:2 }}
+                </span>
+            </div>
+
+            <div class="stat-box">
+                <span class="stat-label">
+                    Paid Sales
+                </span>
+                <span class="stat-value">
+                    R{{ paid_sales|floatformat:2 }}
+                </span>
+            </div>
+
+            <div class="stat-box">
+                <span class="stat-label">
+                    Outstanding
+                </span>
+                <span class="stat-value">
+                    R{{ outstanding_sales|floatformat:2 }}
+                </span>
+            </div>
+
+            <div class="stat-box">
+                <span class="stat-label">
+                    Average Order
+                </span>
+                <span class="stat-value">
+                    R{{ average_order_value|floatformat:2 }}
+                </span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         ORDER STATUS
+    ========================================== -->
+
+    <section class="report-section">
+
+        <h3>
+            Order Status
+        </h3>
+
+        <div class="stats-grid">
+
+            <div class="stat-box">
+                <span class="stat-label">Received</span>
+                <span class="stat-value">{{ new_orders }}</span>
+            </div>
+
+            <div class="stat-box">
+                <span class="stat-label">Preparing</span>
+                <span class="stat-value">{{ preparing_orders }}</span>
+            </div>
+
+            <div class="stat-box">
+                <span class="stat-label">Braaiing</span>
+                <span class="stat-value">{{ braaiing_orders }}</span>
+            </div>
+
+            <div class="stat-box">
+                <span class="stat-label">Ready</span>
+                <span class="stat-value">{{ ready_orders }}</span>
+            </div>
+
+            <div class="stat-box">
+                <span class="stat-label">Collected</span>
+                <span class="stat-value">{{ collected_orders }}</span>
+            </div>
+
+            <div class="stat-box">
+                <span class="stat-label">Cancelled</span>
+                <span class="stat-value">{{ cancelled_orders }}</span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         SOURCE / TYPE / PAYMENT
+    ========================================== -->
+
+    <section class="report-section">
+
+        <h3>
+            Order Breakdown
+        </h3>
+
+        <div class="stats-grid">
+
+            <div class="stat-box">
+                <span class="stat-label">Online</span>
+                <span class="stat-value">{{ online_orders }}</span>
+            </div>
+
+            <div class="stat-box">
+                <span class="stat-label">Over the Counter</span>
+                <span class="stat-value">{{ counter_orders }}</span>
+            </div>
+
+            <div class="stat-box">
+                <span class="stat-label">Ordering at {{ shop.name }}</span>
+                <span class="stat-value">{{ premises_orders }}</span>
+            </div>
+
+            <div class="stat-box">
+                <span class="stat-label">Collection</span>
+                <span class="stat-value">{{ collection_orders }}</span>
+            </div>
+
+            <div class="stat-box">
+                <span class="stat-label">Paid Orders</span>
+                <span class="stat-value">{{ paid_orders }}</span>
+            </div>
+
+            <div class="stat-box">
+                <span class="stat-label">Payment Pending</span>
+                <span class="stat-value">{{ pending_payment_orders }}</span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         TOP ITEMS
+    ========================================== -->
+
+    <section class="report-section">
+
+        <h3>
+            Menu Item Performance
+        </h3>
+
+        {% if top_items %}
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Menu Item</th>
+                            <th>Type</th>
+                            <th>Orders</th>
+                            <th>Quantity</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for item in top_items %}
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        {{ item.name }}
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    {% if item.pricing_type == "fixed" %}
+                                        Fixed Price
+                                    {% else %}
+                                        Amount Based
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {{ item.order_count }}
+                                </td>
+
+                                <td>
+                                    {% if item.pricing_type == "fixed" %}
+                                        {{ item.quantity }}
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+
+                                <td class="money">
+                                    R{{ item.value|floatformat:2 }}
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-message">
+                No menu item sales for this date.
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- =========================================
+         BRAAI MASTER
+    ========================================== -->
+
+    <section class="report-section">
+
+        <h3>
+            Braai Master Activity
+        </h3>
+
+        {% if braai_master_report %}
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Braai Master</th>
+                            <th>Orders Assigned</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for master in braai_master_report %}
+
+                            <tr>
+                                <td>
+                                    {{ master.braai_master__name }}
+                                </td>
+
+                                <td>
+                                    {{ master.order_count }}
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-message">
+                No Braai Master activity for this date.
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- =========================================
+         ORDER DETAILS
+    ========================================== -->
+
+    <section class="report-section">
+
+        <h3>
+            Order Details
+        </h3>
+
+        {% if orders %}
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Time</th>
+                            <th>Customer</th>
+                            <th>Source</th>
+                            <th>Status</th>
+                            <th>Payment</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for order in orders %}
+
+                            <tr>
+
+                                <td>
+                                    #{{ order.id }}
+                                </td>
+
+                                <td>
+                                    {{ order.created_at|date:"H:i" }}
+                                </td>
+
+                                <td>
+                                    {{ order.customer_name }}
+                                </td>
+
+                                <td>
+                                    {{ order.get_order_source_display }}
+                                </td>
+
+                                <td>
+                                    <span class="status status-{{ order.status }}">
+                                        {{ order.get_status_display }}
+                                    </span>
+                                </td>
+
+                                <td>
+
+                                    {% if order.payment_status == "paid" %}
+
+                                        <span class="paid">
+                                            Paid
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="pending">
+                                            Pending
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td class="money">
+
+                                    {% if order.final_total != None %}
+
+                                        R{{ order.final_total|floatformat:2 }}
+
+                                    {% else %}
+
+                                        R{{ order.estimated_total|floatformat:2 }}
+
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-message">
+                No orders were recorded on this date.
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+</main>
+
+
+</body>
+</html>

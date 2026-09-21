@@ -1,0 +1,1130 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+{% load static %}
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>{{ shop.name }} Online Ordering</title>
+
+    <!-- Browser Tab Icon -->
+    <link
+        rel="icon"
+        type="image/png"
+        href="{% static 'orders/images/Hlophe-icon-.png' %}"
+    >
+
+    <!-- Mobile / Apple Icon -->
+    <link
+        rel="apple-touch-icon"
+        href="{% static 'orders/images/Hlophe-icon-.png' %}"
+    >
+
+</head>
+
+  <style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f5f5;
+        color: #222;
+    }
+
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    .header {
+        background: #161616;
+        color: white;
+        padding: 26px 20px;
+    }
+
+    .brand {
+        max-width: 900px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .brand-icon {
+        width: 58px;
+        height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #c9362b;
+        border-radius: 50%;
+        font-size: 30px;
+        flex-shrink: 0;
+    }
+
+    .brand-content {
+        text-align: left;
+    }
+
+    .brand-content h1 {
+        margin: 0;
+        font-size: 30px;
+        line-height: 1.2;
+    }
+
+    .tagline {
+        margin-top: 5px;
+        color: #f1b24a;
+        font-size: 16px;
+    }
+
+
+    /* =========================
+       PAGE LAYOUT
+    ========================= */
+
+    .container {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 0 20px 30px;
+    }
+
+    .section {
+        background: white;
+        padding: 25px;
+        border-radius: 14px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    }
+
+    .section h2 {
+        margin: 0 0 20px;
+        font-size: 24px;
+    }
+
+
+    /* =========================
+       FORM FIELDS
+    ========================= */
+
+    .field {
+        margin-bottom: 18px;
+    }
+
+    .field:last-child {
+        margin-bottom: 0;
+    }
+
+    .field label {
+        display: block;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .form-control,
+    input[type="text"],
+    input[type="tel"],
+    textarea {
+        width: 100%;
+        padding: 13px 14px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background: #fff;
+        font-size: 16px;
+        outline: none;
+        transition: border-color 0.2s ease,
+                    box-shadow 0.2s ease;
+    }
+
+    .form-control:focus,
+    input[type="text"]:focus,
+    input[type="tel"]:focus,
+    textarea:focus,
+    .menu-select:focus,
+    .category-amount:focus {
+        border-color: #c9362b;
+        box-shadow: 0 0 0 3px rgba(201, 54, 43, 0.12);
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+
+    /* =========================
+       ORDER TYPE
+    ========================= */
+
+    .section ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .section ul li {
+        margin-bottom: 10px;
+    }
+
+    .section ul li label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+    }
+
+    input[type="radio"] {
+        width: 18px;
+        height: 18px;
+        accent-color: #c9362b;
+    }
+
+
+    /* =========================
+       MENU
+    ========================= */
+
+    .menu-intro {
+        color: #666;
+        line-height: 1.6;
+        margin: -5px 0 22px;
+    }
+
+    .category-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .category-card {
+        border: 1px solid #e5e5e5;
+        background: #fafafa;
+        border-radius: 14px;
+        padding: 20px;
+        min-width: 0;
+    }
+
+    .category-title {
+        margin: 0 0 16px;
+        font-size: 21px;
+    }
+
+    .amount-order-block {
+        margin-bottom: 4px;
+    }
+
+    .menu-select {
+        width: 100%;
+        padding: 13px 14px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background: white;
+        font-size: 16px;
+        margin-bottom: 16px;
+        outline: none;
+    }
+
+    .amount-label {
+        display: block;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .amount-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .currency {
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .category-amount {
+        width: 100%;
+        min-width: 0;
+        padding: 13px 14px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background: white;
+        font-size: 17px;
+        outline: none;
+    }
+
+
+    /* =========================
+       FIXED PRICE ITEMS
+    ========================= */
+
+    .fixed-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 14px 0;
+        border-bottom: 1px solid #e5e5e5;
+    }
+
+    .fixed-item:first-of-type {
+        padding-top: 4px;
+    }
+
+    .fixed-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .fixed-item-info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+    }
+
+    .fixed-item-info strong {
+        font-size: 16px;
+        line-height: 1.3;
+    }
+
+    .fixed-price {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .qty-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    .qty-btn {
+        width: 38px;
+        height: 38px;
+        border: none;
+        border-radius: 8px;
+        background: #161616;
+        color: white;
+        font-size: 20px;
+        font-weight: 700;
+        cursor: pointer;
+        line-height: 1;
+    }
+
+    .qty-btn:hover {
+        background: #c9362b;
+    }
+
+    .qty-input {
+        width: 52px;
+        height: 38px;
+        text-align: center;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background: white;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+
+    /* =========================
+       TOTAL
+    ========================= */
+
+    .estimated-box {
+        background: #fff5dc;
+        border: 2px solid #e7a52a;
+        padding: 20px;
+        border-radius: 12px;
+        margin-top: 25px;
+    }
+
+    .estimated-label {
+        font-weight: 700;
+        color: #555;
+    }
+
+    .estimated-total {
+        font-size: 32px;
+        font-weight: 800;
+        margin-top: 5px;
+    }
+
+    .estimate-note {
+        color: #666;
+        line-height: 1.5;
+        margin-top: 8px;
+        font-size: 14px;
+    }
+
+
+    /* =========================
+       SUBMIT BUTTON
+    ========================= */
+
+    .submit-btn {
+        width: 100%;
+        border: none;
+        padding: 17px;
+        background: #c9362b;
+        color: white;
+        border-radius: 9px;
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-bottom: 30px;
+    }
+
+    .submit-btn:hover {
+        background: #a82b22;
+    }
+
+    .header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+    .portal-links {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.staff-login-link {
+    text-decoration: none;
+    background: #c9362b;
+    color: #ffffff;
+    padding: 9px 15px;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 700;
+    transition: 0.2s ease;
+}
+
+.staff-login-link:hover {
+    background: #a82b22;
+}
+
+.management-login-link {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-decoration: none;
+    background: #222;
+    color: #ffffff;
+
+    border-radius: 50%;
+    font-size: 17px;
+
+    transition: 0.2s ease;
+}
+
+.management-login-link:hover {
+    background: #444;
+    transform: translateY(-1px);
+}
+/* =========================================
+   HEADER LOCATION
+========================================= */
+
+.header-location {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #ffffff;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.header-location span {
+    font-size: 20px;
+}
+
+.header-location strong {
+    display: block;
+    color: #f4a623;
+    font-size: 13px;
+    margin-bottom: 2px;
+}
+
+.header-location small {
+    display: block;
+    color: #e5e5e5;
+    font-size: 12px;
+}
+
+
+/* MOBILE */
+@media (max-width: 768px) {
+
+    .header-location {
+        width: 100%;
+        justify-content: center;
+        text-align: left;
+        margin-bottom: 10px;
+    }
+
+}
+
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 700px) {
+
+        .header {
+            padding: 20px 14px;
+        }
+
+        .brand {
+            gap: 10px;
+            justify-content: flex-start;
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            font-size: 25px;
+        }
+
+        .brand-content h1 {
+            font-size: 22px;
+        }
+
+        .tagline {
+            font-size: 14px;
+        }
+
+        .container {
+            padding: 0 12px 24px;
+            margin-top: 15px;
+        }
+
+        .section {
+            padding: 20px 16px;
+            border-radius: 12px;
+        }
+
+        .section h2 {
+            font-size: 21px;
+        }
+
+        .category-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .category-card {
+            padding: 17px;
+        }
+
+        .fixed-item {
+            gap: 10px;
+        }
+
+        .fixed-item-info strong {
+            font-size: 15px;
+        }
+
+        .qty-btn {
+            width: 36px;
+            height: 36px;
+        }
+
+        .qty-input {
+            width: 44px;
+            height: 36px;
+        }
+
+        .estimated-total {
+            font-size: 28px;
+        }
+
+        .submit-btn {
+            font-size: 17px;
+        }
+    }
+
+</style>
+
+
+
+</head>
+</head>
+
+<body>
+<header class="header">
+
+    <div class="header-inner">
+
+        <!-- LEFT: LOCATION -->
+        <div class="header-location">
+            <span>📍</span>
+
+            <div>
+                <strong>Find Us</strong>
+                <small>
+                    {% if shop.address %}
+                        {{ shop.address|linebreaksbr }}
+                    {% endif %}
+
+                    {% if shop.location %}
+                        <br>{{ shop.location }}
+                    {% endif %}
+                </small>
+            </div>
+        </div>
+
+
+        <!-- CENTRE: BRAND -->
+        <div class="brand">
+
+            <div class="brand-icon">
+                🔥
+            </div>
+
+            <div class="brand-content">
+
+                <h1>
+                    {{ shop.name }} Online Ordering
+                </h1>
+
+                <div class="tagline">
+                    Order. Braai. Collect.
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="portal-links">
+
+            <a
+                href="{% url 'staff_login' %}"
+                class="staff-login-link"
+            >
+                Staff Login
+            </a>
+
+            <a
+                href="{% url 'owner_login' %}"
+                class="management-login-link"
+                title="Management Login"
+                aria-label="Management Login"
+            >
+                🏠
+            </a>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<div class="container">
+
+<form method="POST">
+
+    {% csrf_token %}
+
+
+    <!-- ==============================================
+         CUSTOMER DETAILS
+    =============================================== -->
+
+    <div class="section">
+
+        <h2>Your Details</h2>
+
+        {% if form.non_field_errors %}
+            {{ form.non_field_errors }}
+        {% endif %}
+
+        <div class="field">
+
+            <label>
+                Name
+            </label>
+
+            {{ form.customer_name }}
+
+        </div>
+
+        <div class="field">
+
+            <label>
+                WhatsApp / Contact Number
+            </label>
+
+            {{ form.whatsapp_number }}
+
+        </div>
+
+    </div>
+
+
+    <!-- ==============================================
+         ORDER TYPE
+    =============================================== -->
+
+    <div class="section">
+
+        <h2>
+            Where are you ordering from?
+        </h2>
+
+        {{ form.order_type }}
+
+    </div>
+
+
+    <!-- ==============================================
+         MENU
+    =============================================== -->
+
+    <div class="section">
+
+        <h2>
+            Choose Your Order
+        </h2>
+
+        <p class="menu-intro">
+            For meat, choose what you want and enter the amount
+            you would like to spend. For sides and drinks,
+            use the + and &minus; buttons.
+        </p>
+
+
+        {% regroup menu_items by category as category_groups %}
+
+
+        <div class="category-grid">
+
+            {% for group in category_groups %}
+
+                <div class="category-card">
+
+                    <h3 class="category-title">
+
+                        {% if group.grouper %}
+                            {{ group.grouper.name }}
+                        {% else %}
+                            Other
+                        {% endif %}
+
+                    </h3>
+
+
+                    <!-- =========================================
+                         CUSTOMER AMOUNT ITEMS
+                    ========================================== -->
+
+                    <div class="amount-order-block">
+
+                        {% for item in group.list %}
+
+                            {% if item.pricing_type == "amount" %}
+
+                                <div class="amount-item">
+
+                                    <div class="amount-item-info">
+                                        <strong>{{ item.name }}</strong>
+                                    </div>
+
+                                    <div class="amount-wrapper">
+
+                                        <span class="currency">R</span>
+
+                                        <input
+                                            type="number"
+                                            name="amount_{{ item.pk }}"
+                                            id="amount_{{ item.pk }}"
+                                            class="item-amount"
+                                            min="0"
+                                            step="1"
+                                            placeholder="0"
+                                            inputmode="decimal"
+                                            oninput="calculateTotal()"
+                                        >
+
+                                    </div>
+
+                                </div>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- =========================================
+                         FIXED PRICE ITEMS
+                    ========================================== -->
+
+                    {% for item in group.list %}
+
+                        {% if item.pricing_type == "fixed" %}
+
+                            <div class="fixed-item">
+
+                                <div class="fixed-item-info">
+
+                                    <strong>
+                                        {{ item.name }}
+                                    </strong>
+
+                                    <span class="fixed-price">
+
+                                        {% if item.price %}
+                                            R{{ item.price }}
+                                        {% else %}
+                                            Price not set
+                                        {% endif %}
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="qty-controls">
+
+                                    <button
+                                        type="button"
+                                        class="qty-btn"
+                                        data-target="quantity_{{ item.pk }}"
+                                        onclick="changeQuantity(this, -1)"
+                                    >
+                                        &minus;
+                                    </button>
+
+
+                                    <input
+                                        type="number"
+                                        id="quantity_{{ item.pk }}"
+                                        name="quantity_{{ item.pk }}"
+                                        class="qty-input"
+                                        value="0"
+                                        min="0"
+                                        readonly
+                                        data-price="{{ item.price|default:'0' }}"
+                                    >
+
+
+                                    <button
+                                        type="button"
+                                        class="qty-btn"
+                                        data-target="quantity_{{ item.pk }}"
+                                        onclick="changeQuantity(this, 1)"
+                                    >
+                                        +
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                </div>
+
+            {% empty %}
+
+                <p>
+                    No menu items are currently available.
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+
+  <!-- ==========================================
+     ESTIMATED PRICE
+=========================================== -->
+
+<div class="estimated-box">
+
+    <div class="estimated-label">
+        Estimated Price
+    </div>
+
+    <div
+        class="estimated-total"
+        id="estimatedTotal"
+    >
+        R0.00
+    </div>
+
+    <div class="estimate-note">
+        This is an estimated price for your order.
+        The final amount may change after your meat has been
+        prepared and weighed.
+    </div>
+
+</div>
+
+    <!-- ==============================================
+         SPECIAL INSTRUCTIONS
+    =============================================== -->
+
+    <div class="section">
+
+        <h2>
+            Special Instructions
+        </h2>
+
+        {{ form.notes }}
+
+    </div>
+
+
+    <button
+        type="submit"
+        class="submit-btn"
+    >
+        Place Order
+    </button>
+
+
+</form>
+
+</div>
+
+
+<script>
+
+function selectAmountItem(select) {
+
+    const card =
+        select.closest(".category-card");
+
+    const amountInput =
+        card.querySelector(".category-amount");
+
+
+    card
+        .querySelectorAll(".hidden-item-amount")
+        .forEach(function(hiddenInput) {
+
+            hiddenInput.value = "";
+
+        });
+
+
+    if (!select.value) {
+
+        if (amountInput) {
+            amountInput.value = "";
+        }
+
+        calculateTotal();
+
+        return;
+    }
+
+
+    updateAmountItem(amountInput);
+}
+
+
+function updateAmountItem(input) {
+
+    if (!input) {
+        return;
+    }
+
+
+    const card =
+        input.closest(".category-card");
+
+    const select =
+        card.querySelector(".amount-select");
+
+
+    card
+        .querySelectorAll(".hidden-item-amount")
+        .forEach(function(hiddenInput) {
+
+            hiddenInput.value = "";
+
+        });
+
+
+    if (!select || !select.value) {
+
+        calculateTotal();
+
+        return;
+    }
+
+
+    const hiddenInput =
+        document.getElementById(
+            "amount_" + select.value
+        );
+
+
+    if (hiddenInput) {
+
+        hiddenInput.value =
+            input.value;
+
+    }
+
+
+    calculateTotal();
+}
+
+
+function changeQuantity(button, change) {
+
+    const targetId =
+        button.dataset.target;
+
+    const input =
+        document.getElementById(
+            targetId
+        );
+
+
+    if (!input) {
+        return;
+    }
+
+
+    let quantity =
+        parseInt(input.value) || 0;
+
+
+    quantity += change;
+
+
+    if (quantity < 0) {
+        quantity = 0;
+    }
+
+
+    input.value =
+        quantity;
+
+
+    calculateTotal();
+}
+
+
+function calculateTotal() {
+
+    let total = 0;
+
+
+    /* =========================================
+       MEAT / CUSTOMER-ENTERED AMOUNTS
+    ========================================== */
+
+    document
+        .querySelectorAll(".item-amount")
+        .forEach(function(input) {
+
+            const amount =
+                parseFloat(input.value) || 0;
+
+            total += amount;
+
+        });
+
+
+    /* =========================================
+       SIDES / DRINKS / FIXED PRICE ITEMS
+    ========================================== */
+
+    document
+        .querySelectorAll(".qty-input")
+        .forEach(function(input) {
+
+            const quantity =
+                parseInt(input.value) || 0;
+
+            const price =
+                parseFloat(input.dataset.price) || 0;
+
+            total += quantity * price;
+
+        });
+
+
+    const totalElement =
+        document.getElementById("estimatedTotal");
+
+
+    if (totalElement) {
+
+        totalElement.textContent =
+            "R" + total.toFixed(2);
+
+    }
+
+}
+
+
+/* =========================================
+   HIDE AMOUNT SECTION FOR FIXED-ONLY
+   CATEGORIES SUCH AS SIDES / DRINKS
+========================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        document
+            .querySelectorAll(".amount-order-block")
+            .forEach(function(block) {
+
+                if (
+                    block.querySelectorAll(".item-amount").length === 0
+                ) {
+
+                    block.style.display = "none";
+
+                }
+
+            });
+
+
+        calculateTotal();
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>
