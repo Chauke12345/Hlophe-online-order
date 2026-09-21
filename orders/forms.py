@@ -110,7 +110,7 @@ class CounterOrderForm(forms.ModelForm):
         )
 
         # Counter orders require a customer name
-        # and number so Hlophe can send the
+        # and number so the business can send the
         # Ready for Collection notification.
         self.fields[
             "customer_name"

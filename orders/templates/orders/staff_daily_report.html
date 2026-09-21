@@ -761,7 +761,7 @@
             </div>
 
             <div class="stat-box">
-                <span class="stat-label">Ordering at {{ shop.name }}</span>
+                <span class="stat-label">Premises Orders</span>
                 <span class="stat-value">{{ premises_orders }}</span>
             </div>
 
@@ -792,7 +792,7 @@
     <section class="report-section">
 
         <h3>
-            Menu Item Performance
+            Top Menu Items
         </h3>
 
         {% if top_items %}
@@ -804,16 +804,15 @@
                     <thead>
                         <tr>
                             <th>Menu Item</th>
-                            <th>Type</th>
                             <th>Orders</th>
                             <th>Quantity</th>
-                            <th>Value</th>
+                            <th>Sales</th>
                         </tr>
                     </thead>
 
                     <tbody>
 
-                        {% for item in top_items %}
+                        {% for item in top_items|slice:":5" %}
 
                             <tr>
 
@@ -824,14 +823,6 @@
                                 </td>
 
                                 <td>
-                                    {% if item.pricing_type == "fixed" %}
-                                        Fixed Price
-                                    {% else %}
-                                        Amount Based
-                                    {% endif %}
-                                </td>
-
-                                <td>
                                     {{ item.order_count }}
                                 </td>
 
@@ -839,7 +830,7 @@
                                     {% if item.pricing_type == "fixed" %}
                                         {{ item.quantity }}
                                     {% else %}
-                                        —
+                                        N/A
                                     {% endif %}
                                 </td>
 
@@ -856,6 +847,14 @@
                 </table>
 
             </div>
+
+            {% if top_items|length > 5 %}
+
+                <p class="report-note">
+                    Showing the top 5 menu items for this date.
+                </p>
+
+            {% endif %}
 
         {% else %}
 
@@ -931,7 +930,7 @@
     <section class="report-section">
 
         <h3>
-            Order Details
+            Recent Order Details
         </h3>
 
         {% if orders %}
@@ -954,7 +953,7 @@
 
                     <tbody>
 
-                        {% for order in orders %}
+                        {% for order in orders|slice:":10" %}
 
                             <tr>
 
@@ -1021,6 +1020,15 @@
                 </table>
 
             </div>
+
+            {% if orders|length > 10 %}
+
+                <p class="report-note">
+                    Showing the 10 most recent orders.
+                    See Order History for the complete daily order list.
+                </p>
+
+            {% endif %}
 
         {% else %}
 

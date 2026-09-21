@@ -1,6 +1,6 @@
-# Hlophe Online Ordering System
+# Shisanyama Connect
 
-A Django-based online ordering and order management system developed for Hlophe.
+A multi-tenant Django-based online ordering and business management platform developed by EdVance Tech.
 
 The platform allows customers to place orders online while also supporting walk-in customers through a staff-managed counter ordering system.
 

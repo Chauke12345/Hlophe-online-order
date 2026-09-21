@@ -1,5 +1,5 @@
 """
-Django settings for Hlophe Online Ordering.
+Django settings for Shisanyama Connect.
 """
 
 from pathlib import Path

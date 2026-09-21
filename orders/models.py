@@ -16,7 +16,7 @@ class Shop(models.Model):
 
     # Unique tenant identifier used in URLs.
     # Example:
-    # /shop/hlophe-butchery/
+    # /shop/example-shisanyama/
     slug = models.SlugField(
         max_length=160,
         unique=True,
