@@ -40,10 +40,10 @@ Orders can progress through:
 ### EdVance Management
 - Secure owner/management portal
 - Monitor completed orders
-- Track platform fees
-- R15 platform fee per completed order
-- View paid and outstanding settlements
-- Monthly settlement tracking
+- Monitor connected businesses
+- R500 monthly subscription per active business
+- View paid and outstanding subscriptions
+- Monthly subscription tracking
 
 ## Technology
 
